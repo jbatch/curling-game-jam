@@ -16,7 +16,7 @@ module.exports = {
   entry: './app.ts',
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'dist', 'client')
   },
   context: path.resolve(__dirname, 'src/client'),
   mode: 'development',

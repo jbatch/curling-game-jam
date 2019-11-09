@@ -1,9 +1,9 @@
-'use strict';
+// 'use strict';
 
 import 'phaser';
 import GameScene from './js/scenes/game-scene';
 import './assets/css/app.css';
-
+alert();
 var config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: 960,
