@@ -6,14 +6,16 @@ import './client/assets/css/app.css';
 
 var config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
+  // width: 960,
+  // height: 640,
   width: 960,
-  height: 640,
+  height: 2000,
   parent: 'main',
   scene: [GameScene],
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 200 },
+      gravity: { y: 0, x: 0 },
       debug: true
     }
   }

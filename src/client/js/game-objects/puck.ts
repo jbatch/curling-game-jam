@@ -20,6 +20,7 @@ export default class Puck extends Phaser.GameObjects.Image {
     super(scene, x, y, texture, frame);
     this.setDisplayOrigin(0.5);
     this.setOrigin(0.5);
+    this.setDepth(2);
     this.scene.physics.world.enable(this);
     this.body.setAllowGravity(false);
     this.body.setAllowDrag(true);

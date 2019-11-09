@@ -2,11 +2,13 @@
 
 import 'phaser';
 import Puck from '../game-objects/puck';
+import Target from '../game-objects/tartget';
 
 export default class GameScene extends Phaser.Scene {
-  
-  private puck: Phaser.GameObjects.Image;
-  
+  private puck: Puck;
+  private targets: Target[];
+  private width: number;
+  private height: number;
 
   constructor() {
     super('GameScene');
@@ -16,15 +18,30 @@ export default class GameScene extends Phaser.Scene {
 
   preload() {
     this.load.image('puck', './media/puck.png');
+    this.load.image('background', './media/background2.png');
   }
 
   create() {
-    this.puck = new Puck({scene: this, x: 500, y: 550, texture: 'puck'});
+    this.width = this.game.config.width as number;
+    this.height = this.game.config.height as number;
+    this.puck = new Puck({
+      scene: this,
+      x: this.width,
+      y: this.height,
+      texture: 'puck'
+    });
+    this.cameras.main.startFollow(this.puck);
+    this.add.tileSprite(0, 0, this.width, this.height, 'background').setDisplayOrigin(0);
+    const target = new Target({scene: this, x: this.width / 2, y: this.height / 2});
+    // this.targets.push(target);
   }
 
-  
-
   update(time, delta) {
-    (this.puck.body as Phaser.Physics.Arcade.Body).velocity.multiply(new Phaser.Math.Vector2({x: 0.99, y: 0.99}));
+    this.puck.body.velocity.multiply(
+      new Phaser.Math.Vector2({ x: 0.99, y: 0.99 })
+    );
+    if(this.puck.body.velocity.length() < 20) {
+      this.puck.body.velocity.set(0,0);
+    }
   }
 }
