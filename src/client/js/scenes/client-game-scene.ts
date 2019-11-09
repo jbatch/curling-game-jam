@@ -9,7 +9,7 @@ import SceneManager from '../util/scene-manager';
 export default class ClientGameScene extends Phaser.Scene {
   private connectionManager: ConnectionManager;
   private sceneManager: SceneManager;
-  private puck: Puck;
+  private pucks: Puck[];
   private targets: Target[];
   private width: number;
   private height: number;
@@ -31,22 +31,23 @@ export default class ClientGameScene extends Phaser.Scene {
 
     this.width = this.game.config.width as number;
     this.height = this.game.config.height as number;
-    this.puck = new Puck({
+    this.pucks = [];
+    const puck = new Puck({
       scene: this,
       x: this.width,
       y: this.height,
       texture: 'puck'
     });
-    this.cameras.main.startFollow(this.puck);
+    this.cameras.main.startFollow(puck);
+    this.pucks.push(puck);
     this.add.tileSprite(0, 0, this.width, this.height, 'background').setDisplayOrigin(0);
     const target = new Target({ scene: this, x: this.width / 2, y: this.height / 2 });
     // this.targets.push(target);
   }
 
   update(time, delta) {
-    this.puck.body.velocity.multiply(new Phaser.Math.Vector2({ x: 0.99, y: 0.99 }));
-    if (this.puck.body.velocity.length() < 20) {
-      this.puck.body.velocity.set(0, 0);
+    for (var p of this.pucks) {
+      p.update();
     }
   }
 }

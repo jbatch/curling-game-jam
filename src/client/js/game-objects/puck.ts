@@ -63,10 +63,21 @@ export default class Puck extends Phaser.GameObjects.Image {
       { x: e.x, y: e.y },
       { x: this.startX, y: this.startY }
     );
+    this.launch(rotation, lineLength * 2);
+  }
+
+  launch(rotation, power) {
     this.scene.physics.velocityFromRotation(
       rotation,
-      lineLength * 2,
+      power,
       (this.body as Phaser.Physics.Arcade.Body).velocity
     );
+  }
+
+  update() {
+    this.body.velocity.multiply(new Phaser.Math.Vector2({ x: 0.99, y: 0.99 }));
+    if (this.body.velocity.length() < 20) {
+      this.body.velocity.set(0, 0);
+    }
   }
 }
