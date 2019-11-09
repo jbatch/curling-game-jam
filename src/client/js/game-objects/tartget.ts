@@ -6,10 +6,10 @@ type Props = {
   y: number;
 };
 
-export default class Puck extends Phaser.GameObjects.GameObject {
+export default class Target extends Phaser.GameObjects.GameObject {
   private x;
   private y;
-  constructor({scene, x, y}) {
+  constructor({ scene, x, y }: Props) {
     super(scene, 'target');
     this.x = x;
     this.y = y;
