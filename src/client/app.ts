@@ -5,6 +5,7 @@ import ClientGameScene from './js/scenes/client-game-scene';
 import HostGameScene from './js/scenes/host-game-scene';
 import StartSceenScene from './js/scenes/start-screen-scene';
 import './assets/css/app.css';
+import ConnectionManager from './js/util/connection-manager';
 
 var config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -45,4 +46,16 @@ window.addEventListener('load', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const mode = urlParams.get('mode') || 'NONE';
   const game = new Game(config, mode);
+  const connectionManager = ConnectionManager.getInstance();
+
+  const newGameButton = document.getElementById('new-game');
+  const joinGameButton = document.getElementById('join-game');
+  newGameButton.addEventListener('click', () => {
+    connectionManager.registerHost();
+  });
 });
+
+window['joinGame'] = function joinGame(id, player) {
+  const connectionManager = ConnectionManager.getInstance();
+  connectionManager.joinGame(id, player);
+};

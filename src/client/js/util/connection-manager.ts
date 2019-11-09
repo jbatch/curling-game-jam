@@ -7,6 +7,7 @@ var instance: ConnectionManager;
 
 export default class ConnectionManager {
   socket: SocketIOClient.Socket;
+
   constructor() {
     console.assert(instance === undefined, 'Trying to instantiate non-Singleton ConnectionManager');
     this.socket = socketIO({ transports: ['websocket'] });
@@ -18,7 +19,24 @@ export default class ConnectionManager {
         console.log('Server response:');
         console.log(resp);
       };
-      this.socket.emit('/api', data, receiver);
+      // this.socket.emit('new-host', data, receiver);
+      this.socket.on('message', function(msg) {
+        console.log('Message from server: ', msg);
+      });
+    });
+  }
+
+  registerHost() {
+    console.log('Registring as host...');
+    this.socket.emit('new-host', { data: 'i am the host now' }, resp => {
+      console.log('Server response: ', resp);
+    });
+  }
+
+  joinGame(roomId, playerName) {
+    console.log(`Joining room "${roomId}" as "${playerName}"`);
+    this.socket.emit('add-player', { roomId, playerName }, resp => {
+      console.log('Server response: ', resp);
     });
   }
 
