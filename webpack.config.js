@@ -7,7 +7,7 @@ const htmlPlugin = new HtmlWebpackPlugin({
 });
 
 const copyPlugin = new CopyWebpackPlugin([
-  {from:'assets/media',to:'media'},,
+  {from:'assets/media',to:'media'},
   {from:'assets/data', to: 'data'}
 ]); 
 
@@ -17,11 +17,11 @@ module.exports = {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist')
   },
-  context: path.resolve(__dirname, 'src'),
+  context: path.resolve(__dirname, 'src/client'),
   mode: 'development',
   watch: true,
   devServer: {
-    contentBase: path.resolve(__dirname, './src/assets'),
+    contentBase: path.resolve(__dirname, './client/src/assets'),
     stats: 'errors-only',
     port: 8000,
     compress: true,
