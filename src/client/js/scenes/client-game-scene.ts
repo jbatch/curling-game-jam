@@ -4,16 +4,18 @@ import 'phaser';
 import Puck from '../game-objects/puck';
 import Target from '../game-objects/tartget';
 import ConnectionManager from '../util/connection-manager';
+import SceneManager from '../util/scene-manager';
 
-export default class GameScene extends Phaser.Scene {
+export default class ClientGameScene extends Phaser.Scene {
   private connectionManager: ConnectionManager;
+  private sceneManager: SceneManager;
   private puck: Puck;
   private targets: Target[];
   private width: number;
   private height: number;
 
   constructor() {
-    super('GameScene');
+    super({ key: 'PlayerScene', active: false, visible: false });
   }
 
   init() {}
@@ -25,6 +27,8 @@ export default class GameScene extends Phaser.Scene {
 
   create() {
     this.connectionManager = ConnectionManager.getInstance();
+    this.sceneManager = SceneManager.getInstance(this.scene);
+
     this.width = this.game.config.width as number;
     this.height = this.game.config.height as number;
     this.puck = new Puck({

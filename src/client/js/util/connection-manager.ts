@@ -1,6 +1,8 @@
 'use strict';
 
 const socketIO = require('socket.io-client');
+import { EventManager, ServerEvent, ClientEvent } from './event-manager';
+
 var instance: ConnectionManager;
 
 export default class ConnectionManager {
@@ -18,6 +20,10 @@ export default class ConnectionManager {
       };
       this.socket.emit('/api', data, receiver);
     });
+  }
+
+  sendClientEvent(event: ClientEvent) {
+    // Send event to backend here
   }
 
   static getInstance() {
