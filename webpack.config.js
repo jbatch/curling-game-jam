@@ -24,7 +24,10 @@ module.exports = {
     contentBase: path.resolve(__dirname, './src/assets'),
     stats: 'errors-only',
     port: 8000,
-    compress: true
+    compress: true,
+    proxy: {
+      '/api/fire-event': 'http://localhost:3000'
+    }
   },
   devtool: 'inline-source-map',
   resolve: {

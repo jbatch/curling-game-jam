@@ -4,11 +4,10 @@
   "description": "a",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/webpack-dev-server --inline --hot",
-    "build": "./node_modules/.bin/webpack",
-    "build:prod": "./node_modules/.bin/webpack -p",
-    "watch": "./node_modules/.bin/webpack --watch",
-    "dev": "./node_modules/.bin/webpack-dev-server"
+    "start": "webpack-dev-server --inline --hot",
+    "start:server": "node src/server/index.js",
+    "start:server:watch": "nodemon --watch src/server --exec \"yarn start:server\"",
+    "build": "webpack -p"
   },
   "author": "a",
   "repository": {},
@@ -22,6 +21,7 @@
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.8.0",
+    "nodemon": "^1.19.4",
     "style-loader": "^1.0.0",
     "ts-loader": "^6.2.0",
     "typescript": "^3.6.4",
@@ -30,6 +30,7 @@
     "webpack-dev-server": "^3.8.2"
   },
   "dependencies": {
+    "express": "^4.17.1",
     "phaser": "^3.20.0"
   }
 }
