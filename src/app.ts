@@ -2,8 +2,6 @@
 
 import 'phaser';
 import GameScene from './js/scenes/game-scene';
-import SettingsScene from './js/scenes/settings-scene';
-import ScoreScene from './js/scenes/score-scene';
 import './assets/css/app.css';
 
 var config: Phaser.Types.Core.GameConfig = {
@@ -11,12 +9,12 @@ var config: Phaser.Types.Core.GameConfig = {
   width: 960,
   height: 640,
   parent: 'main',
-  scene: [GameScene, SettingsScene, ScoreScene],
+  scene: [GameScene],
   physics: {
     default: 'arcade',
     arcade: {
       gravity: { y: 200 },
-      debug: false
+      debug: true
     }
   }
 };
