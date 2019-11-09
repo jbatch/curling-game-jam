@@ -3,13 +3,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const htmlPlugin = new HtmlWebpackPlugin({
-  template: 'index.html'
+  template: 'index.html',
+  favicon: 'assets/media/favicon.png'
 });
 
 const copyPlugin = new CopyWebpackPlugin([
-  {from:'assets/media',to:'media'},
-  {from:'assets/data', to: 'data'}
-]); 
+  { from: 'assets/media', to: 'media' },
+  { from: 'assets/data', to: 'data' }
+]);
 
 module.exports = {
   entry: './app.ts',

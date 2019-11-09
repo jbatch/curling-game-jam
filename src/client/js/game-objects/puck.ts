@@ -34,38 +34,23 @@ export default class Puck extends Phaser.GameObjects.Image {
   startLauch(e: Phaser.Input.Pointer) {
     this.startX = e.x;
     this.startY = e.y;
-    this.trajectoryLine = this.scene.add
-      .line(
-        0,
-        0,
-        this.x,
-        this.y,
-        this.x + (e.x - this.startX),
-        this.y + (e.y - this.startY),
-        0xff0000,
-        1.0
-      )
-      .setOrigin(0, 0);
+    this.drawLine(this.x, this.y, this.x + (e.x - this.startX), this.y + (e.y - this.startY));
 
     this.scene.input.removeListener('pointerdown', this.startLauch, this);
     this.scene.input.addListener('pointermove', this.chargeLaunch, this);
     this.scene.input.on('pointerup', this.releaseLaunch, this);
   }
 
+  drawLine(x1, y1, x2, y2) {
+    this.trajectoryLine = this.scene.add
+      .line(0, 0, x1, y1, x2, y2, 0xff0000, 1.0)
+      .setOrigin(0, 0)
+      .setDepth(3);
+  }
+
   chargeLaunch(e) {
     this.trajectoryLine.destroy();
-    this.trajectoryLine = this.scene.add
-      .line(
-        0,
-        0,
-        this.x,
-        this.y,
-        this.x + (e.x - this.startX),
-        this.y + (e.y - this.startY),
-        0xff0000,
-        1.0
-      )
-      .setOrigin(0, 0);
+    this.drawLine(this.x, this.y, this.x + (e.x - this.startX), this.y + (e.y - this.startY));
   }
 
   releaseLaunch(e) {
