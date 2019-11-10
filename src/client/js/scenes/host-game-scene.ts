@@ -38,25 +38,37 @@ export default class HostGameScene extends Phaser.Scene {
     this.initEventHandling();
   }
 
+  handleNewPuckEvent(puck: Puck) {
+    for (var p of this.pucks) {
+      this.physics.add.collider(puck, p);
+    }
+    this.pucks.push(puck);
+  }
+
   initEventHandling() {
-    this.eventManager.on('playerMove', this.handlePlayerMove, this);
+    this.eventManager.on('server-player-move', this.handlePlayerMove, this);
+    this.eventManager.on('game-new-puck', this.handleNewPuckEvent, this);
   }
 
   handlePlayerMove({ startX, startY, rotation, power }) {
     const puck = new Puck({ scene: this, x: startX, y: startY, texture: 'puck' });
     puck.launch(rotation, power);
-    this.pucks.push(puck);
   }
 
   update(time, delta) {
-    for (var p of this.pucks) {
-      p.update();
-    }
-    if (Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey('S'))) {
-      this.eventManager.emit('playerMove', {
+    if (Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey('Q'))) {
+      this.eventManager.emit('server-player-move', {
         startX: this.width,
         startY: this.height,
         rotation: 2.6,
+        power: 350
+      });
+    }
+    if (Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey('W'))) {
+      this.eventManager.emit('server-player-move', {
+        startX: 0,
+        startY: 0,
+        rotation: -0.6,
         power: 350
       });
     }

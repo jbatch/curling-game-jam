@@ -42,12 +42,7 @@ export default class ClientGameScene extends Phaser.Scene {
     this.pucks.push(puck);
     this.add.tileSprite(0, 0, this.width, this.height, 'background').setDisplayOrigin(0);
     const target = new Target({ scene: this, x: this.width / 2, y: this.height / 2 });
-    // this.targets.push(target);
   }
 
-  update(time, delta) {
-    for (var p of this.pucks) {
-      p.update();
-    }
-  }
+  update(time, delta) {}
 }

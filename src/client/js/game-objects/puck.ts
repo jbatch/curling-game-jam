@@ -1,6 +1,7 @@
 'use strict';
 
 import 'phaser';
+import { EventManager } from '../util/event-manager';
 
 type Props = {
   scene: Phaser.Scene;
@@ -10,7 +11,7 @@ type Props = {
   frame?: string | integer;
 };
 
-export default class Puck extends Phaser.GameObjects.Image {
+export default class Puck extends Phaser.Physics.Arcade.Image {
   public body!: Phaser.Physics.Arcade.Body;
   private trajectoryLine: Phaser.GameObjects.Line;
   private startX: number;
@@ -22,13 +23,16 @@ export default class Puck extends Phaser.GameObjects.Image {
     this.setOrigin(0.5);
     this.setDepth(2);
     this.scene.physics.world.enable(this);
+    this.scene.add.existing(this);
     this.body.setAllowGravity(false);
-    this.body.setAllowDrag(true);
     this.body.setBounce(1, 1);
     this.body.setCollideWorldBounds(true);
-    this.scene.add.existing(this);
+    this.body.setCircle(30);
+    this.body.useDamping = true;
+    this.body.setDrag(0.99, 0.99);
 
     this.scene.input.on('pointerdown', this.startLauch, this);
+    EventManager.getInstance().emit('game-new-puck', this);
   }
 
   startLauch(e: Phaser.Input.Pointer) {
@@ -66,6 +70,10 @@ export default class Puck extends Phaser.GameObjects.Image {
     this.launch(rotation, lineLength * 2);
   }
 
+  launch2(x, y, power) {
+    this.scene.physics.accelerateTo(this, x, y, 30);
+  }
+
   launch(rotation, power) {
     this.scene.physics.velocityFromRotation(
       rotation,
@@ -74,10 +82,5 @@ export default class Puck extends Phaser.GameObjects.Image {
     );
   }
 
-  update() {
-    this.body.velocity.multiply(new Phaser.Math.Vector2({ x: 0.99, y: 0.99 }));
-    if (this.body.velocity.length() < 20) {
-      this.body.velocity.set(0, 0);
-    }
-  }
+  update() {}
 }
