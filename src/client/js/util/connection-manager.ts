@@ -12,7 +12,7 @@ export default class ConnectionManager {
 
   constructor() {
     console.assert(instance === undefined, 'Trying to instantiate non-Singleton ConnectionManager');
-    this.socket = socketIO({ transports: ['websocket'] });
+    this.socket = socketIO({});
     this.eventManager = EventManager.getInstance();
 
     this.socket.on('connect', () => {

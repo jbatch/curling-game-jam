@@ -51,7 +51,7 @@ window.addEventListener('load', () => {
   const newGameButton = document.getElementById('new-game');
   const joinGameButton = document.getElementById('join-game');
   newGameButton.addEventListener('click', () => {
-    connectionManager.registerHost();
+    connectionManager.registerHost({});
   });
 });
 

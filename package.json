@@ -4,16 +4,20 @@
   "description": "a",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --inline --hot",
+    "start": "node dist/server/index.js",
     "dev": "rm -rf dist && webpack --watch",
     "start:server": "node src/server/index.js",
     "start:server:watch": "nodemon --watch src/server --exec \"yarn start:server\"",
-    "build": "webpack -p"
+    "build": "rm -rf dist && webpack -p && cp -r src/server dist",
+    "deploy": "yarn build && gcloud app deploy"
   },
   "author": "a",
   "repository": {},
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
+    "@types/socket.io-client": "^1.4.32",
+    "express": "^4.17.1",
+    "phaser": "^3.20.0",
     "@babel/core": "^7.6.3",
     "@types/express": "^4.17.2",
     "@types/ws": "^6.0.3",
@@ -35,11 +39,6 @@
     "webpack-cli": "^3.3.9",
     "webpack-dev-server": "^3.8.2",
     "ws": "^7.2.0"
-  },
-  "dependencies": {
-    "@types/socket.io-client": "^1.4.32",
-    "express": "^4.17.1",
-    "phaser": "^3.20.0"
   },
   "prettier": {
     "singleQuote": true,

@@ -70,6 +70,12 @@ export default class Puck extends Phaser.Physics.Arcade.Image {
       { x: this.startX, y: this.startY }
     );
     this.launch(rotation, lineLength * 2);
+    this.eventManager.emit('client-player-move', {
+      startX: this.x,
+      startY: this.y,
+      rotation,
+      power: lineLength * 2
+    });
   }
 
   launch(rotation, power) {
@@ -78,12 +84,6 @@ export default class Puck extends Phaser.Physics.Arcade.Image {
       power,
       (this.body as Phaser.Physics.Arcade.Body).velocity
     );
-    this.eventManager.emit('client-player-move', {
-      startX: this.x,
-      startY: this.y,
-      rotation,
-      power
-    });
   }
 
   update() {}

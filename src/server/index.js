@@ -73,6 +73,11 @@ app.get('/api/fire-event', (req, res) => {
 /**
  * NOTE: Super important that we listen from the http server NOT the express one!
  */
-server.listen(port, () => {
-  console.log(`Server started, listening on port ${port}`);
+const PORT = process.env.PORT || port;
+const version = process.env.GAE_VERSION || 'unknown';
+const listener = server.listen(PORT, () => {
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+  console.log(`~ Server started, listening on port ${PORT} ~`);
+  console.log(`~ Running version: ${version} ~`);
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
 });
