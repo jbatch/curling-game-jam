@@ -38,7 +38,18 @@ export default class PlayerGameIdleScene extends Phaser.Scene {
   }
 
   initEventHandling() {
-    // this.eventManager.on('server-player-join', this.handleServerPlayerJoin, this);
+    this.eventManager.on('game-next-turn', this.handleGameNextTurn, this);
+  }
+
+  handleGameNextTurn() {
+    console.log('handling nextTurn');
+    const state = this.stateManager.state;
+    this.scene.stop('PlayerGame');
+    if (state.getPlayerId() === state.getState().currentTurn) {
+      this.scene.start('PlayerGame');
+    } else {
+      this.scene.start('PlayerIdle');
+    }
   }
 
   update(time, delta) {}

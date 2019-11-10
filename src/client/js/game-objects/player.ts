@@ -1,3 +1,4 @@
+import { StateManager } from '../util/state-manager';
 'use strict';
 
 type Props = {
@@ -11,9 +12,9 @@ export default class Player extends Phaser.GameObjects.GameObject {
   private circle: Phaser.GameObjects.Arc;
   constructor({ scene }: Props) {
     super(scene, 'player');
-    this.x = scene.game.config.width as number;
-    this.y = scene.game.config.height as number;
-    this.playerId = '';
+    this.x = (scene.game.config.width as number) / 2;
+    this.y = (scene.game.config.height as number) / 2;
+    this.playerId = StateManager.getInstance().state.getPlayerId();
 
     this.circle = this.scene.add
       .circle(this.x, this.y, 50, 0x993333)

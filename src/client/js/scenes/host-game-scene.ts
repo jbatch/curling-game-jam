@@ -7,6 +7,7 @@ import Puck from '../game-objects/puck';
 import RoomIndicator from '../game-objects/room-indicator';
 import { EventManager } from '../util/event-manager';
 import { GameState } from '../util/state-manager';
+import Player from '../game-objects/player';
 
 export default class HostGameScene extends Phaser.Scene {
   private sceneManager: SceneManager;
@@ -14,8 +15,8 @@ export default class HostGameScene extends Phaser.Scene {
   private width: number;
   private height: number;
   private pucks: Puck[];
-  private availableStartingPositions: { x: number; y: number }[];
   private state: GameState;
+  private waitingFor: string; // PLAYER_ACTION, ROUND_END
 
   constructor() {
     super({ key: 'HostGame', active: false, visible: false });
@@ -34,13 +35,8 @@ export default class HostGameScene extends Phaser.Scene {
     this.width = this.game.config.width as number;
     this.height = this.game.config.height as number;
     this.pucks = [];
-    this.availableStartingPositions = [
-      { x: 0, y: 0 },
-      { x: this.width, y: 0 },
-      { x: this.width, y: this.height },
-      { x: 0, y: this.height }
-    ];
     this.state = state;
+    this.waitingFor = 'PLAYER_ACTION';
 
     this.add.tileSprite(0, 0, this.width, this.height, 'background').setDisplayOrigin(0);
     const target = new Target({ scene: this, x: this.width / 2, y: this.height / 2 });
@@ -62,27 +58,44 @@ export default class HostGameScene extends Phaser.Scene {
   }
 
   handleServerPlayerMove({ startX, startY, rotation, power }) {
-    console.log('host scene got server-player-move');
-    const puck = new Puck({ scene: this, x: startX, y: startY, texture: 'puck' });
+    const puck = new Puck({ scene: this, x: startX, y: startY, texture: 'puck', active: false });
+    console.log('pucks length: ', this.pucks.length);
     puck.launch(rotation, power);
+    setTimeout(() => (this.waitingFor = 'ROUND_END'), 500);
+  }
+
+  nextTurn() {
+    console.log('HOST: next players turn');
+    const pucks = this.pucks.map(puck => ({ id: '???', x: puck.x, y: puck.y }));
+    const playerIds = this.state.players.map(p => p.id);
+    const index = playerIds.indexOf(this.state.currentTurn);
+    if (index === playerIds.length - 1) {
+      /// END ROUND
+      console.log('SHOULD END ROUND');
+      return;
+    }
+    const newCurrentTurn = playerIds[index + 1];
+    this.state = {
+      pucks,
+      players: this.state.players,
+      currentTurn: newCurrentTurn
+    };
+    this.eventManager.emit('client-next-turn', this.state);
   }
 
   update(time, delta) {
-    if (Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey('Q'))) {
-      this.eventManager.emit('server-player-move', {
-        startX: this.width,
-        startY: this.height,
-        rotation: 2.6,
-        power: 350
-      });
-    }
-    if (Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey('W'))) {
-      this.eventManager.emit('server-player-move', {
-        startX: 0,
-        startY: 0,
-        rotation: -0.6,
-        power: 350
-      });
+    if (this.waitingFor === 'ROUND_END') {
+      let roundEnded = true;
+      for (var p of this.pucks) {
+        console.log('speed: ', p.body.velocity.length());
+        if (p.body.velocity.length() > 5) {
+          roundEnded = false;
+        }
+      }
+      if (roundEnded) {
+        this.waitingFor = 'PLAYER_ACTION';
+        this.nextTurn();
+      }
     }
   }
 }

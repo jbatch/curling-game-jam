@@ -39,7 +39,10 @@ export default class PlayerGameActiveScene extends Phaser.Scene {
     this.player = new Player({ scene: this });
     this.pucks = [];
 
+    const playerState = this.stateManager.state.getDataForPlayer(this.player.playerId);
+    console.log(playerState);
     this.cameras.main.startFollow(this.player, true, 0.01, 0.01);
+    this.player.setPosition(playerState.x, playerState.y);
 
     this.add.tileSprite(0, 0, this.width, this.height, 'background').setDisplayOrigin(0);
     const target = new Target({ scene: this, x: this.width / 2, y: this.height / 2 });
@@ -75,6 +78,7 @@ export default class PlayerGameActiveScene extends Phaser.Scene {
       this.eventManager.emit('client-player-move', { startX, startY, rotation, power });
     });
     this.eventManager.on('game-new-puck', this.handleNewPuckEvent, this);
+    this.eventManager.on('game-next-turn', this.handleGameNextTurn, this);
   }
 
   handleGameStateSync() {
@@ -93,8 +97,15 @@ export default class PlayerGameActiveScene extends Phaser.Scene {
     this.pucks.push(puck);
   }
 
-  handleGameStartTurn() {
-    const puck = new Puck({ scene: this, x: this.player.x, y: this.player.y, texture: 'puck' });
+  handleGameNextTurn() {
+    console.log('handling nextTurn');
+    const state = this.stateManager.state;
+    this.scene.stop('PlayerGame');
+    if (state.getPlayerId() === state.getState().currentTurn) {
+      this.scene.start('PlayerGame');
+    } else {
+      this.scene.start('PlayerIdle');
+    }
   }
 
   update(time, delta) {}

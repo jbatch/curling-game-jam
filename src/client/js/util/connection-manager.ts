@@ -32,6 +32,9 @@ export default class ConnectionManager {
     this.eventManager.on('client-lobby-update', data => {
       this.socket.emit('client-lobby-update', { ...data, roomId: this.roomId });
     });
+    this.eventManager.on('client-next-turn', data => {
+      this.socket.emit('client-next-turn', { ...data, roomId: this.roomId });
+    });
 
     this.eventManager.on('client-new-game', this.handleClientNewGame, this);
     this.eventManager.on('client-player-join', this.handleClientPlayerJoin, this);
@@ -84,6 +87,10 @@ export default class ConnectionManager {
     this.socket.on('server-start-game', data => {
       this.eventManager.emit('server-start-game', data);
       console.log(`PLAYER: Starting game!`, data);
+    });
+    this.socket.on('server-next-turn', data => {
+      this.eventManager.emit('server-next-turn', data);
+      console.log(`PLAYER: next turn!`, data);
     });
   }
 
