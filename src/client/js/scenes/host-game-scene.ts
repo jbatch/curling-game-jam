@@ -59,8 +59,7 @@ export default class HostGameScene extends Phaser.Scene {
 
   handleServerPlayerMove({ startX, startY, rotation, power }) {
     const puck = new Puck({ scene: this, x: startX, y: startY, texture: 'puck', active: false });
-    console.log('pucks length: ', this.pucks.length);
-    puck.launch(rotation, power);
+  ]    puck.launch(rotation, power);
     setTimeout(() => (this.waitingFor = 'ROUND_END'), 500);
   }
 

@@ -3,6 +3,7 @@
 import 'phaser';
 import PlayerGameActiveScene from './js/scenes/player-game-active-scene';
 import PlayerGameIdleScene from './js/scenes/player-game-idle-scene';
+import PlayerLobbyInputScene from './js/scenes/player-lobby-input-scene';
 import PlayerLobbyScene from './js/scenes/player-lobby-scene';
 import HostGameScene from './js/scenes/host-game-scene';
 import HostLobbyScene from './js/scenes/host-lobby-scene';
@@ -20,6 +21,7 @@ var config: Phaser.Types.Core.GameConfig = {
     HostGameScene,
     PlayerGameActiveScene,
     HostLobbyScene,
+    PlayerLobbyInputScene,
     PlayerLobbyScene,
     PlayerGameIdleScene
   ],
@@ -29,6 +31,9 @@ var config: Phaser.Types.Core.GameConfig = {
       gravity: { y: 200 },
       debug: true
     }
+  },
+  dom: {
+    createContainer: true
   }
 };
 

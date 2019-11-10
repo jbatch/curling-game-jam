@@ -36,7 +36,7 @@ export default class HostLobbyScene extends Phaser.Scene {
     this.state = { pucks: [], players: [], currentTurn: undefined };
     this.playerLabels = [];
 
-    this.add.text(this.width / 2, 0, 'Host Lobby', { fontSize: '50px' });
+    this.add.text(this.width / 2, 0, 'Host Lobby', { fontSize: '50px' }).setOrigin(0.5, 0);
 
     // Hacked in for easier dev loop
     const urlParams = new URLSearchParams(window.location.search);
