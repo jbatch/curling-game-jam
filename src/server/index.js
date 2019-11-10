@@ -19,26 +19,39 @@ app.use(express.static(FRONTEND_DIST_DIR));
 webSocketServer.on('connection', ws => {
   console.log('New connection created');
 
-  ws.on('new-host', (data, ack) => {
+  ws.on('client-new-game', (data, ack) => {
     console.log('New host is creating a room');
     const newGame = lobbyManager.createNewGame();
     newGame.addHostSocket(ws);
     const roomId = newGame.roomId;
     ack({ roomId });
+    ws.join(roomId);
     console.log('New game: ', roomId);
-    console.log('games', lobbyManager.games);
+    console.log(
+      'games',
+      lobbyManager.games.map(g => ({ id: g.roomId, players: g.players }))
+    );
   });
 
-  ws.on('add-player', (data, ack) => {
+  ws.on('client-player-join', (data, ack) => {
     const { roomId, playerName } = data;
     const success = lobbyManager.addPlayerToGame(roomId, playerName, ws);
     if (!success) {
-      return ack({ error: `Unable to find room with id ${roomId}` });
+      return ack({ success: false, error: `Unable to find room with id ${roomId}` });
     }
-    ack({ msg: 'nice' });
+    console.log(`Player "${playerName}" joined game "${roomId}"`);
+    ack({ success: true });
+    ws.join(roomId);
+    ws.emit('server-player-join', { playerName });
   });
 
-  ws.send('Webserver welcomes you');
+  ws.on('client-player-move', data => {
+    const { startX, startY, rotation, power } = data;
+    console.log('player move event', data);
+    ws.emit('server-player-move', data);
+  });
+
+  ws.send('Webserver welcomes you', { foo: 'bar' });
 });
 
 app.get('/', (req, res) => res.send('You are being served by the server, not the dist/'));

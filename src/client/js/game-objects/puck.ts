@@ -1,6 +1,7 @@
 'use strict';
 
 import 'phaser';
+import { EventManager } from '../util/event-manager';
 
 type Props = {
   scene: Phaser.Scene;
@@ -15,9 +16,11 @@ export default class Puck extends Phaser.GameObjects.Image {
   private trajectoryLine: Phaser.GameObjects.Line;
   private startX: number;
   private startY: number;
+  private eventManager: EventManager;
 
   constructor({ scene, x, y, texture, frame }: Props) {
     super(scene, x, y, texture, frame);
+    this.eventManager = EventManager.getInstance();
     this.setDisplayOrigin(0.5);
     this.setOrigin(0.5);
     this.setDepth(2);
@@ -64,6 +67,12 @@ export default class Puck extends Phaser.GameObjects.Image {
       { x: this.startX, y: this.startY }
     );
     this.launch(rotation, lineLength * 2);
+    this.eventManager.emit('client-player-move', {
+      startX: this.x,
+      startY: this.y,
+      rotation: rotation,
+      power: lineLength * 2
+    });
   }
 
   launch(rotation, power) {

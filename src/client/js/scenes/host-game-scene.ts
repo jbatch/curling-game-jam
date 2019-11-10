@@ -39,7 +39,7 @@ export default class HostGameScene extends Phaser.Scene {
   }
 
   initEventHandling() {
-    this.eventManager.on('playerMove', this.handlePlayerMove, this);
+    this.eventManager.on('server-player-move', this.handlePlayerMove, this);
   }
 
   handlePlayerMove({ startX, startY, rotation, power }) {
@@ -53,7 +53,7 @@ export default class HostGameScene extends Phaser.Scene {
       p.update();
     }
     if (Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey('S'))) {
-      this.eventManager.emit('playerMove', {
+      this.eventManager.emit('client-player-move', {
         startX: this.width,
         startY: this.height,
         rotation: 2.6,
