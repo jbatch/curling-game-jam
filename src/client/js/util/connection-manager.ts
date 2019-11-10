@@ -42,7 +42,11 @@ export default class ConnectionManager {
   registerHost(data) {
     console.log('Registring as host...');
     this.socket.emit('client-new-game', { ...data }, resp => {
-      console.log('Server response: ', resp);
+      if (!resp.success) {
+        console.error('Unable to join as host', resp);
+        return;
+      }
+      console.log('Successfully joined room as host', resp.roomId);
       this.roomId = resp.roomId;
     });
     this.socket.on('server-player-join', data => {

@@ -1,20 +1,19 @@
 # curling-game-jam
-Game Jam game aboot curling
 
+Game Jam game aboot curling
 
 ## Development
 
 Start the backend server (on port `3000`) in watch mode:
 
 ```
-yarn start:server:watch
+yarn start:server
 ```
 
-Start the frontend (on port `8000`) in watch mode:
+Start the frontend in watch mode:
 
 ```
-yarn start
+yarn dev
 ```
 
-All requests should go through the frontend [https://localhost/8000](https://localhost/8000), API requests will automatically be proxied
-
+All requests should go through the server [https://localhost/3000](https://localhost/3000), frontend is served from disk (updated by watch mode)

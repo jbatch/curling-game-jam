@@ -12,33 +12,27 @@ const server = http.createServer(app);
 const webSocketServer = io(server);
 
 const lobbyManager = new LobbyManager();
-const defaultGame = lobbyManager.getGameById('ZZZZ');
 
 app.use(express.static(FRONTEND_DIST_DIR));
 
 webSocketServer.on('connection', ws => {
-  console.log('New connection created');
+  console.log('New connection created', ws.id);
 
   ws.on('client-new-game', (data, ack) => {
-    console.log('New host is creating a room');
-    if (data.roomId) {
-      const game = lobbyManager.getGameById(data.roomId);
-      if (!game) {
-        console.error('Game not found: ', data.roomId);
-      }
-      game.addHostSocket(ws);
-      ws.join(data.roomId);
-      ack({ roomId: data.roomId });
+    const game = lobbyManager.getGameById(data.roomId) || lobbyManager.createNewGame();
+    const roomId = game.roomId;
+    console.log('Host is creating a new game', roomId);
+    if (game.hostSocket) {
+      console.error('Host attempted to join an existing game', roomId);
+      ack({ success: false, error: 'Attempted to join an existing game' });
       return;
     }
-    const newGame = lobbyManager.createNewGame();
-    newGame.addHostSocket(ws);
-    const roomId = newGame.roomId;
-    ack({ roomId });
+    game.addHostSocket(ws);
     ws.join(roomId);
-    console.log('New game: ', roomId);
+    ack({ success: true, roomId });
+
     console.log(
-      'games',
+      'Current Games: ',
       lobbyManager.games.map(g => ({ id: g.roomId, players: g.players }))
     );
   });
@@ -47,7 +41,7 @@ webSocketServer.on('connection', ws => {
     const { roomId, playerName } = data;
     const success = lobbyManager.addPlayerToGame(roomId, playerName, ws);
     if (!success) {
-      return ack({ success: false, error: `Unable to find room with id ${roomId}` });
+      return ack({ success: false, error: `Unable join room ${roomId} with name ${playerName}` });
     }
     console.log(`Player "${playerName}" joined game "${roomId}"`);
     ack({ success: true });
@@ -56,19 +50,34 @@ webSocketServer.on('connection', ws => {
   });
 
   ws.on('client-player-move', data => {
-    const { startX, startY, rotation, power } = data;
     console.log('player move event', data);
     ws.to(data.roomId).emit('server-player-move', data);
   });
 
-  ws.send('Webserver welcomes you', { foo: 'bar' });
+  ws.on('client-start-game', data => {
+    console.log('client-start-game event', data);
+    ws.to(data.roomId).emit('server-start-game', data);
+  });
+
+  ws.on('client-next-turn', data => {
+    console.log('client-next-turn event', data);
+    ws.to(data.roomId).emit('server-next-turn', data);
+  });
+
+  ws.on('client-round-end', data => {
+    console.log('client-round-end event', data);
+    ws.to(data.roomId).emit('server-round-end', data);
+  });
+
+  ws.on('client-game-end', data => {
+    console.log('client-game-end event', data);
+    ws.to(data.roomId).emit('server-game-end', data);
+  });
+
+  ws.send('Connection to webserver successful, welcome');
 });
 
 app.get('/', (req, res) => res.send('You are being served by the server, not the dist/'));
-app.get('/api/fire-event', (req, res) => {
-  console.log('event receieved new');
-  res.send('Event received!');
-});
 
 /**
  * NOTE: Super important that we listen from the http server NOT the express one!

@@ -34,7 +34,6 @@ module.exports = class LobbyManager {
   addPlayerToGame(gameId, playerName, socket) {
     const game = this.getGameById(gameId);
     if (!game) return false;
-    game.addPlayer(playerName, socket);
-    return true;
+    return game.addPlayer(playerName, socket);
   }
 };
