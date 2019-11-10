@@ -57,7 +57,6 @@ export default class PlayerLobbyScene extends Phaser.Scene {
   }
 
   handleServerGameStart(state: GameState) {
-    console.log('handleServerGameStart');
     this.stateManager.state.setState(state);
     this.sceneManager.startPlayerGameScene();
   }

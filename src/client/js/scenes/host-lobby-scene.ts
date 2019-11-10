@@ -38,6 +38,22 @@ export default class HostLobbyScene extends Phaser.Scene {
 
     this.add.text(this.width / 2, 0, 'Host Lobby', { fontSize: '50px' }).setOrigin(0.5, 0);
 
+    const playersReadyButton = this.add.dom(
+      this.width / 2,
+      this.height * 0.8,
+      'button',
+      'height: 50px; width: 200px; font-size: 28px; border-radius: 14px;',
+      'Players Ready'
+    );
+    playersReadyButton.node.addEventListener('click', () => {
+      this.eventManager.emit('client-start-game', {
+        pucks: this.state.pucks,
+        players: this.state.players,
+        currentTurn: this.state.currentTurn
+      });
+      this.sceneManager.startHostGameScene(this.state);
+    });
+
     // Hacked in for easier dev loop
     const urlParams = new URLSearchParams(window.location.search);
     const roomId = urlParams.get('roomId');
