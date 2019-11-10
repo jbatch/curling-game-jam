@@ -16,9 +16,11 @@ export default class Puck extends Phaser.Physics.Arcade.Image {
   private trajectoryLine: Phaser.GameObjects.Line;
   private startX: number;
   private startY: number;
+  private eventManager: EventManager;
 
   constructor({ scene, x, y, texture, frame }: Props) {
     super(scene, x, y, texture, frame);
+    this.eventManager = EventManager.getInstance();
     this.setDisplayOrigin(0.5);
     this.setOrigin(0.5);
     this.setDepth(2);
@@ -32,7 +34,7 @@ export default class Puck extends Phaser.Physics.Arcade.Image {
     this.body.setDrag(0.99, 0.99);
 
     this.scene.input.on('pointerdown', this.startLauch, this);
-    EventManager.getInstance().emit('game-new-puck', this);
+    this.eventManager.emit('game-new-puck', this);
   }
 
   startLauch(e: Phaser.Input.Pointer) {
@@ -70,16 +72,18 @@ export default class Puck extends Phaser.Physics.Arcade.Image {
     this.launch(rotation, lineLength * 2);
   }
 
-  launch2(x, y, power) {
-    this.scene.physics.accelerateTo(this, x, y, 30);
-  }
-
   launch(rotation, power) {
     this.scene.physics.velocityFromRotation(
       rotation,
       power,
       (this.body as Phaser.Physics.Arcade.Body).velocity
     );
+    this.eventManager.emit('client-player-move', {
+      startX: this.x,
+      startY: this.y,
+      rotation,
+      power
+    });
   }
 
   update() {}

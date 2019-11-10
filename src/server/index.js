@@ -2,6 +2,7 @@ const express = require('express');
 const io = require('socket.io');
 const http = require('http');
 const path = require('path');
+const LobbyManager = require('./LobbyManager');
 
 const port = 3000;
 const FRONTEND_DIST_DIR = 'dist/client';
@@ -10,16 +11,47 @@ const app = express();
 const server = http.createServer(app);
 const webSocketServer = io(server);
 
+const lobbyManager = new LobbyManager();
+const defaultGame = lobbyManager.getGameById('ZZZZ');
+
 app.use(express.static(FRONTEND_DIST_DIR));
 
 webSocketServer.on('connection', ws => {
-  console.log('Got connection');
-  ws.on('message', message => {
-    console.log('received: %s', message);
-    ws.send(`Hello, you sent -> ${message}`);
+  console.log('New connection created');
+
+  ws.on('client-new-game', (data, ack) => {
+    console.log('New host is creating a room');
+    const newGame = lobbyManager.createNewGame();
+    newGame.addHostSocket(ws);
+    const roomId = newGame.roomId;
+    ack({ roomId });
+    ws.join(roomId);
+    console.log('New game: ', roomId);
+    console.log(
+      'games',
+      lobbyManager.games.map(g => ({ id: g.roomId, players: g.players }))
+    );
   });
 
-  ws.send('Hi there, I am a WebSocket server');
+  ws.on('client-player-join', (data, ack) => {
+    const { roomId, playerName } = data;
+    const success = lobbyManager.addPlayerToGame(roomId, playerName, ws);
+    if (!success) {
+      return ack({ success: false, error: `Unable to find room with id ${roomId}` });
+    }
+    console.log(`Player "${playerName}" joined game "${roomId}"`);
+    ack({ success: true });
+    ws.join(roomId);
+    ws.to(roomId).emit('server-player-join', { playerName });
+  });
+
+  ws.on('client-player-move', data => {
+    const { startX, startY, rotation, power } = data;
+    console.log('player move event', data);
+    ws.to(data.roomId).emit('server-player-move', data);
+  });
+
+  ws.send('Webserver welcomes you', { foo: 'bar' });
 });
 
 app.get('/', (req, res) => res.send('You are being served by the server, not the dist/'));

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --inline --hot",
-    "dev": "webpack --watch",
+    "dev": "rm -rf dist && webpack --watch",
     "start:server": "node src/server/index.js",
     "start:server:watch": "nodemon --watch src/server --exec \"yarn start:server\"",
     "build": "webpack -p"

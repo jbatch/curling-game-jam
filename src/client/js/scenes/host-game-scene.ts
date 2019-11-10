@@ -51,6 +51,7 @@ export default class HostGameScene extends Phaser.Scene {
   }
 
   handlePlayerMove({ startX, startY, rotation, power }) {
+    console.log('host scene git server-player-move');
     const puck = new Puck({ scene: this, x: startX, y: startY, texture: 'puck' });
     puck.launch(rotation, power);
   }
