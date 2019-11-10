@@ -56,13 +56,10 @@ export default class HostLobbyScene extends Phaser.Scene {
 
     // Hacked in for easier dev loop
     const urlParams = new URLSearchParams(window.location.search);
-    const roomId = urlParams.get('roomId');
-    if (roomId) {
-      this.eventManager.emit('client-new-game', { roomId: roomId }, resp => {
-        console.log('Server response: ', resp);
-        // this.roomId = resp.roomId;
-      });
-    }
+    const roomId = urlParams.get('roomId') || undefined;
+    this.eventManager.emit('client-new-game', { roomId: roomId }, resp => {
+      console.log('Server response: ', resp);
+    });
 
     this.initEventHandling();
   }

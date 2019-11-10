@@ -33,17 +33,17 @@ export default class PlayerLobbyInputScene extends Phaser.Scene {
     this.add.text(this.width * 0.5, 0, 'Player Lobby Input', titleStyle).setOrigin(0.5, 0);
 
     this.add.text(this.width * 0.2, this.height * 0.3, 'Room Id', { fontSize: '40px' });
-    this.add
+    const roomIdInput = this.add
       .dom(
         this.width * 0.2,
         this.height * 0.37,
         'input',
         'background-color: lime; width: 220px; height: 50px; font: 48px Arial'
       )
-      .setOrigin(0, 0).node.id = 'roomIdInput';
+      .setOrigin(0, 0);
 
     this.add.text(this.width * 0.2, this.height * 0.5, 'Player name', { fontSize: '40px' });
-    this.add
+    const playerNameInput = this.add
       .dom(
         this.width * 0.2,
         this.height * 0.57,
@@ -51,7 +51,7 @@ export default class PlayerLobbyInputScene extends Phaser.Scene {
         'background-color: lime; width: 220px; height: 50px; font: 48px Arial',
         'JBatch'
       )
-      .setOrigin(0, 0).node.id = 'playerNameInput';
+      .setOrigin(0, 0);
 
     const readyButton = this.add.dom(
       this.width * 0.5,
@@ -61,10 +61,8 @@ export default class PlayerLobbyInputScene extends Phaser.Scene {
       'Ready'
     );
     readyButton.node.addEventListener('click', () => {
-      const playerNameInput = <HTMLInputElement>document.getElementById('playerNameInput');
-      const roomIdInput = <HTMLInputElement>document.getElementById('roomIdInput');
-      const playerName = playerNameInput.value;
-      const roomId = roomIdInput.value;
+      const playerName = (<HTMLInputElement>playerNameInput.node).value;
+      const roomId = (<HTMLInputElement>roomIdInput.node).value;
       if (playerName && roomId) {
         this.eventManager.emit('client-player-join', { roomId, playerName });
         this.stateManager.state.setPlayerId(playerName);
@@ -76,10 +74,10 @@ export default class PlayerLobbyInputScene extends Phaser.Scene {
     const urlParams = new URLSearchParams(window.location.search);
     const roomId = urlParams.get('roomId');
     const playerId = urlParams.get('playerName');
-    if (roomId && playerId) {
-      this.eventManager.emit('client-player-join', { roomId: roomId, playerName: playerId });
-      this.stateManager.state.setPlayerId(playerId);
-      this.sceneManager.startPlayerLobby();
+    if (roomId || playerId) {
+      (<HTMLInputElement>playerNameInput.node).value = playerId || '';
+      (<HTMLInputElement>roomIdInput.node).value = roomId || '';
+      (<HTMLButtonElement>readyButton.node).click();
     }
 
     this.initEventHandlers();
