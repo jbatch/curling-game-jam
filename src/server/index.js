@@ -49,6 +49,12 @@ webSocketServer.on('connection', ws => {
     ws.to(roomId).emit('server-player-join', { playerName });
   });
 
+  ws.on('client-lobby-update', data => {
+    // TODO: maybe update list of players?
+    console.log('player lobby event', data);
+    ws.to(data.roomId).emit('server-lobby-update', data);
+  });
+
   ws.on('client-player-move', data => {
     console.log('player move event', data);
     ws.to(data.roomId).emit('server-player-move', data);
