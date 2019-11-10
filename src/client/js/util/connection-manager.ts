@@ -26,11 +26,22 @@ export default class ConnectionManager {
     this.eventManager.on('client-player-move', data => {
       this.socket.emit('client-player-move', { ...data, roomId: this.roomId });
     });
+
+    this.eventManager.on('client-new-game', this.handleClientNewGame, this);
+    this.eventManager.on('client-player-join', this.handleClientPlayerJoin, this);
   }
 
-  registerHost() {
+  handleClientNewGame(data) {
+    this.registerHost(data);
+  }
+
+  handleClientPlayerJoin(data) {
+    this.joinGame(data.roomId, data.playerName);
+  }
+
+  registerHost(data) {
     console.log('Registring as host...');
-    this.socket.emit('client-new-game', { data: 'i am the host now' }, resp => {
+    this.socket.emit('client-new-game', { ...data }, resp => {
       console.log('Server response: ', resp);
       this.roomId = resp.roomId;
     });

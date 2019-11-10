@@ -21,6 +21,16 @@ webSocketServer.on('connection', ws => {
 
   ws.on('client-new-game', (data, ack) => {
     console.log('New host is creating a room');
+    if (data.roomId) {
+      const game = lobbyManager.getGameById(data.roomId);
+      if (!game) {
+        console.error('Game not found: ', data.roomId);
+      }
+      game.addHostSocket(ws);
+      ws.join(data.roomId);
+      ack({ roomId: data.roomId });
+      return;
+    }
     const newGame = lobbyManager.createNewGame();
     newGame.addHostSocket(ws);
     const roomId = newGame.roomId;

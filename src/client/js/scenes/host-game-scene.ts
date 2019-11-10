@@ -31,6 +31,16 @@ export default class HostGameScene extends Phaser.Scene {
     this.height = this.game.config.height as number;
     this.pucks = [];
 
+    // Hacked in for easier dev loop
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomId = urlParams.get('roomId');
+    if (roomId) {
+      this.eventManager.emit('client-new-game', { roomId: roomId }, resp => {
+        console.log('Server response: ', resp);
+        // this.roomId = resp.roomId;
+      });
+    }
+
     this.add.tileSprite(0, 0, this.width, this.height, 'background').setDisplayOrigin(0);
     const target = new Target({ scene: this, x: this.width / 2, y: this.height / 2 });
     new RoomIndicator({ scene: this, roomId: 'ZZZZ' });
