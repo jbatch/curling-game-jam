@@ -14,7 +14,7 @@ export class StateManager {
     this.state = new State();
 
     this.eventManager.on('server-state-sync', this.handleServerStateSync, this);
-    this.eventManager.on('server-next-turn', this.handleServerNextTurn, this);
+    // this.eventManager.on('server-next-turn', this.handleServerNextTurn, this);
   }
 
   handleServerStateSync({ state }: { state: GameState }) {
@@ -23,12 +23,12 @@ export class StateManager {
     this.eventManager.emit('game-state-sync');
   }
 
-  handleServerNextTurn({ turn }: { turn: string }) {
-    if (turn === this.state.getPlayerId()) {
-      // Tell all scenes to re-sync their state
-      this.eventManager.emit('game-start-turn');
-    }
-  }
+  // handleServerNextTurn({ turn }: { turn: string }) {
+  //   if (turn === this.state.getPlayerId()) {
+  //     // Tell all scenes to re-sync their state
+  //     this.eventManager.emit('game-start-turn');
+  //   }
+  // }
 
   static getInstance() {
     if (instance === undefined) {

@@ -3,14 +3,12 @@
 import 'phaser';
 import Puck from '../game-objects/puck';
 import Target from '../game-objects/tartget';
-import ConnectionManager from '../util/connection-manager';
 import SceneManager from '../util/scene-manager';
 import { EventManager } from '../util/event-manager';
 import { StateManager, GameState } from '../util/state-manager';
 import Player from '../game-objects/player';
 
-export default class PlayerGameScene extends Phaser.Scene {
-  private connectionManager: ConnectionManager;
+export default class PlayerGameActiveScene extends Phaser.Scene {
   private sceneManager: SceneManager;
   private eventManager: EventManager;
   private stateManager: StateManager;
@@ -18,6 +16,7 @@ export default class PlayerGameScene extends Phaser.Scene {
   private width: number;
   private height: number;
   private player: Player;
+  private puck: Puck;
 
   constructor() {
     super({ key: 'PlayerGame', active: false, visible: false });
@@ -30,30 +29,52 @@ export default class PlayerGameScene extends Phaser.Scene {
     this.load.image('background', './media/background2.png');
   }
 
-  create({ state, playerId }: { state: GameState; playerId: string }) {
-    this.connectionManager = ConnectionManager.getInstance();
+  create() {
     this.sceneManager = SceneManager.getInstance(this.scene);
     this.eventManager = EventManager.getInstance();
     this.stateManager = StateManager.getInstance();
 
     this.width = this.game.config.width as number;
     this.height = this.game.config.height as number;
-    this.pucks = [];
     this.player = new Player({ scene: this });
+    this.pucks = [];
 
     this.cameras.main.startFollow(this.player, true, 0.01, 0.01);
 
     this.add.tileSprite(0, 0, this.width, this.height, 'background').setDisplayOrigin(0);
     const target = new Target({ scene: this, x: this.width / 2, y: this.height / 2 });
 
+    this.initMapState();
     this.initEventHandlers();
+
+    // Create puck for player to launch
+    this.puck = new Puck({
+      scene: this,
+      x: this.player.x,
+      y: this.player.y,
+      texture: 'puck',
+      active: true
+    });
+  }
+
+  initMapState() {
+    for (var puckObj of this.stateManager.state.getState().pucks) {
+      var puck = new Puck({
+        scene: this,
+        x: puckObj.x,
+        y: puckObj.y,
+        texture: 'puck',
+        active: false
+      });
+    }
   }
 
   initEventHandlers() {
-    this.eventManager.on('game-start-turn', this.handleGameStartTurn, this);
-    this.eventManager.emit('game-player-move', ({ startX, startY, rotation, power }) => {
+    this.eventManager.on('game-player-move', ({ startX, startY, rotation, power }) => {
+      this.cameras.main.startFollow(this.puck);
       this.eventManager.emit('client-player-move', { startX, startY, rotation, power });
     });
+    this.eventManager.on('game-new-puck', this.handleNewPuckEvent, this);
   }
 
   handleGameStateSync() {
@@ -63,6 +84,13 @@ export default class PlayerGameScene extends Phaser.Scene {
       newState.getDataForPlayer(playerId).x,
       newState.getDataForPlayer(playerId).y
     );
+  }
+
+  handleNewPuckEvent(puck: Puck) {
+    for (var p of this.pucks) {
+      this.physics.add.collider(puck, p);
+    }
+    this.pucks.push(puck);
   }
 
   handleGameStartTurn() {

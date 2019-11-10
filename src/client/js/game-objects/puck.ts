@@ -9,6 +9,7 @@ type Props = {
   y: number;
   texture: string;
   frame?: string | integer;
+  active: boolean;
 };
 
 export default class Puck extends Phaser.Physics.Arcade.Image {
@@ -18,8 +19,9 @@ export default class Puck extends Phaser.Physics.Arcade.Image {
   private startY: number;
   private eventManager: EventManager;
 
-  constructor({ scene, x, y, texture, frame }: Props) {
+  constructor({ scene, x, y, texture, frame, active }: Props) {
     super(scene, x, y, texture, frame);
+    this.active = active;
     this.eventManager = EventManager.getInstance();
     this.setDisplayOrigin(0.5);
     this.setOrigin(0.5);
@@ -33,7 +35,9 @@ export default class Puck extends Phaser.Physics.Arcade.Image {
     this.body.useDamping = true;
     this.body.setDrag(0.99, 0.99);
 
-    this.scene.input.on('pointerdown', this.startLauch, this);
+    if (this.active) {
+      this.scene.input.on('pointerdown', this.startLauch, this);
+    }
     this.eventManager.emit('game-new-puck', this);
   }
 
