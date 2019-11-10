@@ -19,7 +19,9 @@ webSocketServer.on('connection', ws => {
   console.log('New connection created', ws.id);
 
   ws.on('client-new-game', (data, ack) => {
-    const game = lobbyManager.getGameById(data.roomId) || lobbyManager.createNewGame();
+    const game = data.roomId
+      ? lobbyManager.replaceExistingGame(data.roomId)
+      : lobbyManager.createNewGame();
     const roomId = game.roomId;
     console.log('Host is creating a new game', roomId);
     if (game.hostSocket) {

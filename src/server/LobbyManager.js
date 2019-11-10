@@ -18,11 +18,21 @@ module.exports = class LobbyManager {
     return game;
   }
 
-  createNewGame() {
-    const roomId = randomRoomId();
+  createNewGame(forcedId) {
+    const roomId = forcedId || randomRoomId();
     const newGame = new GameManager(roomId);
     this.games.push(newGame);
     return newGame;
+  }
+
+  // This is hack used in testing so that we can blow away games in development
+  replaceExistingGame(roomId) {
+    this.deleteGameById(roomId);
+    return this.createNewGame(roomId);
+  }
+
+  deleteGameById(roomId) {
+    this.games = this.games.filter(game => game.id === roomId);
   }
 
   addHostToGame(gameId, socket) {
