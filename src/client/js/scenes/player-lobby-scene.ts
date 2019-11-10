@@ -33,15 +33,6 @@ export default class PlayerLobbyScene extends Phaser.Scene {
 
     this.add.text(this.width / 2, 0, 'Player Lobby', { fontSize: '50px' }).setOrigin(0.5, 0);
 
-    // Hacked in for easier dev loop
-    const urlParams = new URLSearchParams(window.location.search);
-    const roomId = urlParams.get('roomId');
-    const playerId = urlParams.get('playerName');
-    if (roomId && playerId) {
-      this.eventManager.emit('client-player-join', { roomId: roomId, playerName: playerId });
-      this.stateManager.state.setPlayerId(playerId);
-    }
-
     this.initEventHandlers();
   }
 
