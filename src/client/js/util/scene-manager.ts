@@ -1,6 +1,7 @@
 'use strict';
 
 import 'phaser';
+import { GameState, StateManager } from './state-manager';
 
 var instance: SceneManager;
 
@@ -17,12 +18,27 @@ export default class SceneManager {
       case 'NONE':
         break;
       case 'PLAYER':
-        this.scenePlugin.start('PlayerScene');
+        this.scenePlugin.start('PlayerLobby');
         break;
       case 'HOST':
-        this.scenePlugin.start('HostScene');
+        this.scenePlugin.start('HostLobby');
         break;
     }
+  }
+
+  startHostGameScene(state: GameState) {
+    this.scenePlugin.start('HostGame', state);
+    this.scenePlugin.stop('HostLobby');
+  }
+
+  startPlayerGameScene() {
+    var state = StateManager.getInstance().state;
+    if (state.getPlayerId() === state.getState().currentTurn) {
+      this.scenePlugin.start('PlayerGame');
+    } else {
+      this.scenePlugin.start('PlayerIdle');
+    }
+    this.scenePlugin.stop('PlayerLobby');
   }
 
   static getInstance(scenePlugin: Phaser.Scenes.ScenePlugin) {

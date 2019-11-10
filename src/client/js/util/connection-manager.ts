@@ -26,6 +26,12 @@ export default class ConnectionManager {
     this.eventManager.on('client-player-move', data => {
       this.socket.emit('client-player-move', { ...data, roomId: this.roomId });
     });
+    this.eventManager.on('client-start-game', data => {
+      this.socket.emit('client-start-game', { ...data, roomId: this.roomId });
+    });
+    this.eventManager.on('client-lobby-update', data => {
+      this.socket.emit('client-lobby-update', { ...data, roomId: this.roomId });
+    });
 
     this.eventManager.on('client-new-game', this.handleClientNewGame, this);
     this.eventManager.on('client-player-join', this.handleClientPlayerJoin, this);
@@ -49,9 +55,10 @@ export default class ConnectionManager {
       console.log('Successfully joined room as host', resp.roomId);
       this.roomId = resp.roomId;
     });
+
     this.socket.on('server-player-join', data => {
       this.eventManager.emit('server-player-join', data);
-      console.log(`As host: player joined!`, data);
+      console.log(`HOST: player joined!`, data);
     });
     this.socket.on('server-player-move', data => {
       this.eventManager.emit('server-player-move', data);
@@ -68,7 +75,15 @@ export default class ConnectionManager {
     });
     this.socket.on('server-player-join', data => {
       this.eventManager.emit('server-player-join', data);
-      console.log(`As Player: player joined!`, data);
+      console.log(`PLAYER: player joined!`, data);
+    });
+    this.socket.on('server-lobby-update', data => {
+      this.eventManager.emit('server-lobby-update', data);
+      console.log(`PLAYER: Lobby update!`, data);
+    });
+    this.socket.on('server-start-game', data => {
+      this.eventManager.emit('server-start-game', data);
+      console.log(`PLAYER: Starting game!`, data);
     });
   }
 

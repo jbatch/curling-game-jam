@@ -63,14 +63,13 @@ export default class Puck extends Phaser.Physics.Arcade.Image {
     this.trajectoryLine.destroy();
     this.scene.input.removeListener('pointermove', this.chargeLaunch);
     this.scene.input.removeListener('pointerup', this.releaseLaunch);
-    this.scene.input.on('pointerdown', this.startLauch, this);
     const lineLength = Phaser.Math.Distance.Between(e.x, e.y, this.startX, this.startY);
     const rotation = Phaser.Math.Angle.BetweenPoints(
       { x: e.x, y: e.y },
       { x: this.startX, y: this.startY }
     );
     this.launch(rotation, lineLength * 2);
-    this.eventManager.emit('client-player-move', {
+    this.eventManager.emit('game-player-move', {
       startX: this.x,
       startY: this.y,
       rotation,
