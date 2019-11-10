@@ -13,6 +13,7 @@ export default class HostLobbyScene extends Phaser.Scene {
   private availableStartingPositions: { x: number; y: number }[];
   private state: GameState;
   private playerLabels: Phaser.GameObjects.Text[];
+  private roomIdLabel: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: 'HostLobby', active: false, visible: false });
@@ -37,6 +38,9 @@ export default class HostLobbyScene extends Phaser.Scene {
     this.playerLabels = [];
 
     this.add.text(this.width / 2, 0, 'Host Lobby', { fontSize: '50px' }).setOrigin(0.5, 0);
+    this.roomIdLabel = this.add
+      .text(this.width / 2, this.height * 0.3, 'Room Id: ', { fontSize: '50px' })
+      .setOrigin(0.5, 0);
 
     const playersReadyButton = this.add.dom(
       this.width / 2,
@@ -57,9 +61,7 @@ export default class HostLobbyScene extends Phaser.Scene {
     // Hacked in for easier dev loop
     const urlParams = new URLSearchParams(window.location.search);
     const roomId = urlParams.get('roomId') || undefined;
-    this.eventManager.emit('client-new-game', { roomId: roomId }, resp => {
-      console.log('Server response: ', resp);
-    });
+    this.eventManager.emit('client-new-game', { roomId: roomId });
 
     this.initEventHandling();
   }
@@ -77,6 +79,11 @@ export default class HostLobbyScene extends Phaser.Scene {
 
   initEventHandling() {
     this.eventManager.on('server-player-join', this.handleServerPlayerJoin, this);
+    this.eventManager.on('server-new-game', this.handleNewGame, this);
+  }
+
+  handleNewGame(data) {
+    this.roomIdLabel.setText(`Room Id: ${data.roomId}`);
   }
 
   handleServerPlayerJoin(data) {

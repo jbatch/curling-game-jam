@@ -57,6 +57,7 @@ export default class ConnectionManager {
       }
       console.log('Successfully joined room as host', resp.roomId);
       this.roomId = resp.roomId;
+      this.eventManager.emit('server-new-game', resp);
     });
 
     this.socket.on('server-player-join', data => {
