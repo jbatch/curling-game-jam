@@ -94,7 +94,13 @@ export default class PlayerGameActiveScene extends Phaser.Scene {
   }
 
   handleGameStartTurn() {
-    const puck = new Puck({ scene: this, x: this.player.x, y: this.player.y, texture: 'puck' });
+    const puck = new Puck({
+      scene: this,
+      x: this.player.x,
+      y: this.player.y,
+      texture: 'puck',
+      active: false
+    });
   }
 
   update(time, delta) {}

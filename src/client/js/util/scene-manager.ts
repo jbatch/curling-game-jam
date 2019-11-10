@@ -18,7 +18,7 @@ export default class SceneManager {
       case 'NONE':
         break;
       case 'PLAYER':
-        this.scenePlugin.start('PlayerLobby');
+        this.scenePlugin.start('PlayerLobbyInput');
         break;
       case 'HOST':
         this.scenePlugin.start('HostLobby');
@@ -29,6 +29,11 @@ export default class SceneManager {
   startHostGameScene(state: GameState) {
     this.scenePlugin.start('HostGame', state);
     this.scenePlugin.stop('HostLobby');
+  }
+
+  startPlayerLobby() {
+    this.scenePlugin.start('PlayerLobby');
+    this.scenePlugin.stop('PlayerLobbyInput');
   }
 
   startPlayerGameScene() {
